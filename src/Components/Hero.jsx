@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useAuth } from "../Context/AuthContext";
 import { FaPlay, FaInfoCircle, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
-import "./hero.css";
 import { useNavigate } from "react-router-dom";
 
 const Hero = ({ trendingMovies = [] }) => {
@@ -57,7 +56,7 @@ const Hero = ({ trendingMovies = [] }) => {
   // -----------------------------------
   // Set initial movie once trendingMovies is loaded
   // -----------------------------------
-  
+
   useEffect(() => {
     if (trendingMovies.length === 0) return;
 
