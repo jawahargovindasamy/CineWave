@@ -1,0 +1,24 @@
+.episodes-scrollable::-webkit-scrollbar {
+  width: 8px;
+}
+
+.episodes-scrollable::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+.episodes-scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-input-height {
+  height: 48px; /* same as sort button height */
+}
+
+.custom-input-height .form-control {
+  height: 100%;
+}
+
+.custom-input-height .form-select {
+  height: 100%;
+}
