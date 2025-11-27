@@ -3,7 +3,7 @@ import { useAuth } from "../Context/AuthContext";
 import Navbar from "../Components/Navbar";
 import SearchBar from "../Components/SearchBar";
 import SearchResult from "../Components/SearchResult";
-import Pagination from "../Components/Pagination";   // <-- added
+import Pagination from "../Components/Pagination"; // <-- added
 
 const Search = () => {
   const {
@@ -86,8 +86,14 @@ const Search = () => {
             <Pagination
               currentPage={searchPage}
               totalPages={searchTotalPages}
-              onPrev={() => loadResult(searchPage - 1)}
-              onNext={() => loadResult(searchPage + 1)}
+              onPrev={() => {
+                loadResult(searchPage - 1);
+                window.scrollTo(0, 0);
+              }}
+              onNext={() => {
+                loadResult(searchPage + 1);
+                window.scrollTo(0, 0);
+              }}
             />
           )}
         </>
