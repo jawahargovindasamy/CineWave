@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import Carousel from "react-bootstrap/Carousel";
 import MediaCard from "./MediaCard";
 import { useNavigate } from "react-router-dom";
@@ -6,8 +7,10 @@ import { useNavigate } from "react-router-dom";
 const MovieCarousel = ({ title, movies = [] }) => {
   const [cardsPerSlide, setCardsPerSlide] = useState(5);
   const [loading, setLoading] = useState(true);
+  const [activeIndex, setActiveIndex] = useState(0);
   const navigate = useNavigate();
 
+  // Responsive cards-per-slide
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 425) setCardsPerSlide(2);
@@ -15,15 +18,18 @@ const MovieCarousel = ({ title, movies = [] }) => {
       else if (window.innerWidth <= 992) setCardsPerSlide(4);
       else setCardsPerSlide(5);
     };
+
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Loading state
   useEffect(() => {
     setLoading(movies.length === 0);
   }, [movies]);
 
+  // Slice movies into slides
   const slides = [];
   for (let i = 0; i < movies.length; i += cardsPerSlide) {
     slides.push(movies.slice(i, i + cardsPerSlide));
@@ -34,73 +40,85 @@ const MovieCarousel = ({ title, movies = [] }) => {
     navigate(`/${type}/${movie.id}`);
   };
 
+  const handlePrev = () => {
+    setActiveIndex((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setActiveIndex((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+  };
+
   const LoadingSlide = () => (
-    <div className="d-flex gap-2 gap-md-3 px-2 px-md-3 py-2">
+    <div className="d-flex gap-3">
       {Array.from({ length: cardsPerSlide }).map((_, idx) => (
-        <div key={idx} className="flex-fill movie-card-wrapper">
-          <div className="skeleton-card" />
-        </div>
+        <div
+          key={idx}
+          style={{
+            flex: "1 0 auto",
+            height: "300px",
+            borderRadius: "10px",
+            background: "#333",
+            opacity: 0.4,
+          }}
+        />
       ))}
     </div>
   );
 
   if (loading) {
     return (
-      <div className="movie-slider-container mb-4 mb-md-5">
-        <h3 className="slider-title text-white fw-bold mb-3 mb-md-4 px-3 px-md-4">
-          {title}
-        </h3>
+      <div className="mb-5">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h2 className="text-white">{title}</h2>
+        </div>
         <LoadingSlide />
-        <style>{`
-          .skeleton-card {
-            width: 100%;
-            height: 300px;
-            border-radius: 12px;
-            background: #1a1a1a;
-            position: relative;
-            overflow: hidden;
-          }
-
-          .skeleton-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -150px;
-            width: 150px;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            animation: shimmer 1.2s infinite;
-          }
-
-          @keyframes shimmer {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(100%); }
-          }
-        `}</style>
       </div>
     );
   }
 
   return (
-    <div className="movie-slider-container mb-4 mb-md-5">
-      <h3 className="slider-title text-white fw-bold mb-3 mb-md-4 px-3 px-md-4">
-        {title}
-      </h3>
+    <div className="mb-5">
+      {/* Title + Arrows */}
+      <div className="d-flex justify-content-between align-items-center mb-3 px-1 px-md-2">
+        <h2 className="text-white fw-semibold">{title}</h2>
+
+        <div className="d-flex gap-2">
+          <button
+            className="btn btn-outline-light btn-md d-flex align-items-center justify-content-center"
+            onClick={handlePrev}
+            disabled={slides.length <= 1}
+            style={{ width: "40px", height: "40px", borderRadius: "50%" }}
+          >
+            <FaChevronLeft size={18} />
+          </button>
+          <button
+            className="btn btn-outline-light btn-md d-flex align-items-center justify-content-center"
+            onClick={handleNext}
+            disabled={slides.length <= 1}
+            style={{ width: "40px", height: "40px", borderRadius: "50%" }}
+          >
+            <FaChevronRight size={18} />
+          </button>
+        </div>
+      </div>
+
+      {/* Carousel */}
       <Carousel
+        activeIndex={activeIndex}
+        onSelect={setActiveIndex}
+        controls={false}
         indicators={false}
-        controls
         interval={null}
-        className="movie-carousel"
       >
         {slides.map((group, i) => (
           <Carousel.Item key={i}>
-            <div className="d-flex gap-2 gap-md-3 px-2 px-md-3 py-2">
+            <div className="d-flex gap-3 px-1 px-md-2">
               {group.map((movie) => (
-                <div key={movie.id} className="flex-fill movie-card-wrapper">
+                <div key={movie.id} style={{ flex: "1 0 auto" }}>
                   <MediaCard
-                    image={movie.poster_path}
+                    image={movie.poster_path || movie.profile_path}
                     title={movie.title || movie.name}
-                    rating={movie.vote_average}
+                    rating={movie.vote_average || 0}
                     onClick={() => handleCardClick(movie)}
                   />
                 </div>
@@ -109,83 +127,6 @@ const MovieCarousel = ({ title, movies = [] }) => {
           </Carousel.Item>
         ))}
       </Carousel>
-
-      <style>{`
-        .movie-slider-container {
-          position: relative;
-        }
-
-        .slider-title {
-          font-size: 1.5rem;
-          letter-spacing: 0.5px;
-          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .movie-carousel .carousel-control-prev,
-        .movie-carousel .carousel-control-next {
-          width: 50px;
-          height: 100%;
-          background: linear-gradient(to right, rgba(0,0,0,0.7), transparent);
-          opacity: 0;
-          transition: opacity 0.3s ease;
-        }
-
-        .movie-carousel .carousel-control-next {
-          background: linear-gradient(to left, rgba(0,0,0,0.7), transparent);
-        }
-
-        .movie-slider-container:hover .carousel-control-prev,
-        .movie-slider-container:hover .carousel-control-next {
-          opacity: 1;
-        }
-
-        .movie-carousel .carousel-control-prev-icon,
-        .movie-carousel .carousel-control-next-icon {
-          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
-          width: 30px;
-          height: 30px;
-        }
-
-        .movie-card-wrapper {
-          min-width: 0;
-          transition: transform 0.3s ease;
-        }
-
-        /* Responsive font sizes */
-        @media (max-width: 768px) {
-          .slider-title {
-            font-size: 1.3rem;
-          }
-
-          .movie-carousel .carousel-control-prev,
-          .movie-carousel .carousel-control-next {
-            width: 40px;
-          }
-
-          .movie-carousel .carousel-control-prev-icon,
-          .movie-carousel .carousel-control-next-icon {
-            width: 25px;
-            height: 25px;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .slider-title {
-            font-size: 1.1rem;
-          }
-
-          .movie-carousel .carousel-control-prev,
-          .movie-carousel .carousel-control-next {
-            width: 35px;
-          }
-
-          .movie-carousel .carousel-control-prev-icon,
-          .movie-carousel .carousel-control-next-icon {
-            width: 20px;
-            height: 20px;
-          }
-        }
-      `}</style>
     </div>
   );
 };

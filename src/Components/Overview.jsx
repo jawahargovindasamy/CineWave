@@ -12,7 +12,6 @@ const Overview = ({ id, mediaType }) => {
       const data = await apiCall(`/${mediaType}/${id}`);
       setDetails(data);
     };
-
     fetchDetails();
   }, [id, mediaType, apiCall]);
 
@@ -27,94 +26,133 @@ const Overview = ({ id, mediaType }) => {
     number_of_seasons,
     number_of_episodes,
     genres,
+    spoken_languages,
   } = details;
 
   const displayRuntime =
     mediaType === "movie"
       ? runtime
-        ? `${runtime} minutes`
+        ? `${runtime} min`
         : "N/A"
       : episode_run_time?.length
-      ? `${episode_run_time[0]} minutes`
+      ? `${episode_run_time[0]} min`
       : "N/A";
 
   return (
-    <div className="mx-4 card bg-dark text-white shadow-lg border-secondary">
-      <div className="card-body">
+    <div className="px-4 pt-4 mx-4 card bg-dark text-white shadow-sm rounded-3 border-0">
+      <div className="container-fluid px-4">
+        <div className="p-4">
+          {/* HEADER */}
+          <div className="d-flex align-items-center mb-4">
+            <div
+              className="me-3"
+              style={{
+                width: "5px",
+                height: "30px",
+                backgroundColor: "#0dcaf0",
+                borderRadius: "2px",
+              }}
+            ></div>
+            <h3 className="fw-bold m-0 text-light">Overview</h3>
+          </div>
 
-        {/* Title */}
-        <h3 className="fw-bold border-start border-4 ps-3 mb-4">Overview</h3>
+          {/* OVERVIEW TEXT */}
+          <p className="text-white-50 fs-6 lh-lg mb-4">{overview}</p>
 
-        {/* Overview Text */}
-        <p className="text-light opacity-75 fs-6 mb-4">{overview}</p>
-
-        {/* Grid Section */}
-        <div className="row mb-3">
-
-          {/* --- MOVIE LAYOUT --- */}
-          {mediaType === "movie" && (
-            <>
-              {/* Release Date */}
-              <div className="col-md-6 mb-3">
-                <div className="p-3 bg-secondary bg-opacity-25 rounded">
-                  <strong className="text-primary">Release Date:</strong>
-                  <p className="m-0">{release_date}</p>
+          {/* INFO SECTION */}
+          <div className="row g-3">
+            {mediaType === "movie" && (
+              <>
+                <div className="col-md-4">
+                  <div className="p-3 bg-dark bg-opacity-50 rounded border border-secondary border-opacity-25 h-100">
+                    <h6 className="text-info mb-1 fw-semibold">Release Date</h6>
+                    <p className="m-0">{release_date || "N/A"}</p>
+                  </div>
                 </div>
-              </div>
 
-              {/* Runtime */}
-              <div className="col-md-6 mb-3">
-                <div className="p-3 bg-secondary bg-opacity-25 rounded">
-                  <strong className="text-primary">Runtime:</strong>
-                  <p className="m-0">{displayRuntime}</p>
+                <div className="col-md-4">
+                  <div className="p-3 bg-dark bg-opacity-50 rounded border border-secondary border-opacity-25 h-100">
+                    <h6 className="text-info mb-1 fw-semibold">Runtime</h6>
+                    <p className="m-0">{displayRuntime}</p>
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
 
-          {/* --- TV LAYOUT LIKE MOVIE (2 COLUMNS) --- */}
-          {mediaType === "tv" && (
-            <>
-              {/* Release Date */}
-              <div className="col-md-6 mb-3">
-                <div className="p-3 bg-secondary bg-opacity-25 rounded">
-                  <strong className="text-primary">Release Date:</strong>
-                  <p className="m-0">{first_air_date}</p>
+                <div className="col-md-4">
+                  <div className="p-3 bg-dark bg-opacity-50 rounded border border-secondary border-opacity-25 h-100">
+                    <h6 className="text-info mb-1 fw-semibold">Language</h6>
+                    <p className="m-0">
+                      {spoken_languages?.length
+                        ? spoken_languages
+                            .map((lang) => lang.english_name)
+                            .join(", ")
+                        : "N/A"}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </>
+            )}
 
-              {/* TV Info */}
-              <div className="col-md-6 mb-3">
-                <div className="p-3 bg-secondary bg-opacity-25 rounded">
-                  <strong className="text-primary">TV Info:</strong>
-                  <p className="m-0">
-                    Seasons: <strong>{number_of_seasons}</strong> |
-                    Episodes: <strong>{number_of_episodes}</strong>
-                  </p>
+            {mediaType === "tv" && (
+              <>
+                <div className="col-md-4">
+                  <div className="p-3 bg-dark bg-opacity-50 rounded border border-secondary border-opacity-25 h-100">
+                    <h6 className="text-info mb-1 fw-semibold">
+                      First Air Date
+                    </h6>
+                    <p className="m-0">{first_air_date || "N/A"}</p>
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
-        </div>
 
-        {/* Genres */}
-        <div className="mt-4">
-          <strong className="text-primary">Genres:</strong>
-          <div className="d-flex flex-wrap gap-2 mt-2">
-            {genres?.map((g) => (
-              <Link
-                key={g.id}
-                to={`/genre/${mediaType}/${g.id}`} state={{ genreName: g.name }}
-                onClick={()=>window.scrollTo(0,0)}
-                className="badge bg-primary bg-gradient px-3 py-2 fs-6 rounded-pill"
-                style={{ cursor: "pointer", textDecoration: "none" }}
-              >
-                {g.name}
-              </Link>
-            ))}
+                <div className="col-md-4">
+                  <div className="p-3 bg-dark bg-opacity-50 rounded border border-secondary border-opacity-25 h-100">
+                    <h6 className="text-info mb-1 fw-semibold">TV Info</h6>
+                    <p className="m-0">
+                      Seasons: <strong>{number_of_seasons}</strong> | Episodes:{" "}
+                      <strong>{number_of_episodes}</strong>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="col-md-4">
+                  <div className="p-3 bg-dark bg-opacity-50 rounded border border-secondary border-opacity-25 h-100">
+                    <h6 className="text-info mb-1 fw-semibold">Language</h6>
+                    <p className="m-0">
+                      {spoken_languages?.length
+                        ? spoken_languages
+                            .map((lang) => lang.english_name)
+                            .join(", ")
+                        : "N/A"}
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* GENRES */}
+          <div className="mt-5">
+            <h6 className="text-info fw-semibold mb-3">Genres</h6>
+            <div className="d-flex flex-wrap gap-2">
+              {genres?.map((g) => (
+                <Link
+                  key={g.id}
+                  to={`/genre/${mediaType}/${g.id}`}
+                  state={{ genreName: g.name }}
+                  onClick={() => window.scrollTo(0, 0)}
+                  className="badge bg-gradient text-white px-3 py-2 rounded-pill"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%)",
+                    textDecoration: "none",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  {g.name}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
-
       </div>
     </div>
   );

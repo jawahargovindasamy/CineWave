@@ -4,6 +4,7 @@ import { useAuth } from "../Context/AuthContext";
 import Navbar from "../Components/Navbar";
 import MediaCard from "../Components/MediaCard";
 import Pagination from "../Components/Pagination";
+import CardSkeleton from "../Components/CardSkeleton";
 
 const MovieGenrePage = () => {
   const { id } = useParams();
@@ -67,13 +68,7 @@ const MovieGenrePage = () => {
           {loading
             ? Array.from({ length: 10 }).map((_, idx) => (
                 <div key={idx} className="col">
-                  <div
-                    style={{
-                      height: "300px",
-                      borderRadius: "8px",
-                      background: "#1a1a1a",
-                    }}
-                  />
+                  <CardSkeleton/>
                 </div>
               ))
             : movies.map((movie) => (

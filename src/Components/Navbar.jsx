@@ -19,17 +19,24 @@ const Navbar = () => {
 
   return (
     <nav
-      className="navbar navbar-expand-sm fixed-top px-3 w-100 z-3"
+      className="navbar navbar-expand-sm fixed-top px-3 w-100 z-100"
       style={{ backgroundColor: "transparent" }}
     >
       {/* Brand */}
       <span
         className="navbar-brand text-white fw-bold fs-3 d-flex align-items-center"
         style={{ cursor: "pointer" }}
-        onClick={() => navigate("/")}
+        onClick={() => {
+          navigate("/");
+          window.scrollTo(0, 0);
+        }}
       >
-        <img src={Logo} alt="CineWave Logo" style={{ height: "40px", width: "40px" ,marginRight: "10px" }} />
-        Movie Streaming
+        <img
+          src={Logo}
+          alt="CineWave Logo"
+          style={{ height: "40px", width: "40px", marginRight: "10px" }}
+        />
+        CineWave Movies
       </span>
 
       {/* Hamburger toggle button */}
@@ -51,10 +58,14 @@ const Navbar = () => {
           className="d-flex w-100 gap-3 mt-2 mt-lg-0 navbar-icons"
           style={navbarIconsStyle}
         >
-          <button type="button" className="btn" onClick={() => {
-            navigate("/");
-            window.scrollTo(0, 0);
-          }}>
+          <button
+            type="button"
+            className="btn"
+            onClick={() => {
+              navigate("/");
+              window.scrollTo(0, 0);
+            }}
+          >
             <FaHome className="text-white fs-5" title="Home" />
           </button>
           <button

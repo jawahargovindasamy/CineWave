@@ -82,10 +82,10 @@
 .hero-btn.sound {
   background: rgba(0, 0, 0, 0.4);
   color: white;
-  font-size: 1.3rem; /* icon size */
-  width: 45px;
-  height: 45px;
-  border-radius: 50%; /* circular */
+  font-size: 1.3rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -108,34 +108,6 @@
 .hero-btn.sound:hover svg {
   transform: rotate(10deg); /* playful hover rotation */
   color: #fff;
-}
-
-.hero-btn.play {
-  background: white;
-  color: black;
-  font-weight: 700;
-  font-size: 1rem;
-  padding: 10px 25px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px; /* space between icon and text */
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
-}
-
-.hero-btn.play:hover {
-  background: #e6e6e6; /* slightly darker on hover */
-  transform: scale(1.05); /* subtle pop */
-}
-
-.hero-btn.play svg {
-  transition: transform 0.3s ease;
-}
-
-.hero-btn.play:hover svg {
-  transform: translateX(2px); /* small forward movement on hover */
 }
 
 .info {
@@ -226,6 +198,19 @@
     transform: translateY(0);
   }
 }
+
+/* Add this to Hero.css */
+.hero-container {
+  position: relative;
+}
+
+.hero-btn.sound {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  z-index: 10;
+}
+
 
 /* MOBILE RESPONSIVE */
 @media (max-width: 768px) {

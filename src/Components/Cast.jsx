@@ -35,7 +35,7 @@ const Cast = ({ id, mediaType }) => {
                   src={
                     actor.profile_path
                       ? `https://image.tmdb.org/t/p/w200${actor.profile_path}`
-                      : "https://via.placeholder.com/100x150?text=No+Image"
+                      : "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg"
                   }
                   alt={actor.name}
                   className="rounded shadow-sm me-3"

@@ -1,24 +1,23 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../Context/AuthContext";
-import { FaPlay, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
+import { FaPlay } from "react-icons/fa";
 import "./Hero.css";
 import { useNavigate } from "react-router-dom";
+import TrailerPlayer from "./TrailerPlayer"; // Import the new component
+import HeroSkeleton from "./HeroSkeleton";
 
 const MovieHero = ({ id, mediaType }) => {
   const { apiCall } = useAuth();
 
   const [movie, setMovie] = useState(null);
-  const [trailerKey, setTrailerKey] = useState(null);
-  const [muted, setMuted] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const [season, setSeason] = useState(1); // Default season
   const [episode, setEpisode] = useState(1); // Default episode
 
-  const playerRef = useRef(null);
-
   const navigate = useNavigate();
 
-  // Fetch movie/tv details + trailer
+  // Fetch movie/tv details
   useEffect(() => {
     const fetchMovie = async () => {
       if (!id) return;
@@ -26,52 +25,21 @@ const MovieHero = ({ id, mediaType }) => {
       const m = await apiCall(`/${mediaType}/${id}`);
       setMovie(m);
 
-      const videoData = await apiCall(`/${mediaType}/${id}/videos`);
-      const trailer = videoData.results?.find(
-        (v) => v.type === "Trailer" && v.site === "YouTube"
-      );
-      setTrailerKey(trailer?.key || null);
-
       // For TV shows, set default season and episode
       if (mediaType === "tv" && m?.seasons?.length > 0) {
         setSeason(m.seasons[0].season_number);
         setEpisode(m.seasons[0]?.episodes?.[0]?.episode_number || 1);
       }
+
+      setLoading(false);
     };
 
     fetchMovie();
   }, [id, mediaType, apiCall]);
 
-  // Auto-mute
-  useEffect(() => {
-    if (!trailerKey || !playerRef.current) return;
-
-    const timer = setTimeout(() => {
-      playerRef.current.contentWindow.postMessage(
-        JSON.stringify({ event: "command", func: "mute" }),
-        "*"
-      );
-      setMuted(true);
-    }, 600);
-
-    return () => clearTimeout(timer);
-  }, [trailerKey]);
-
-  const toggleMute = () => {
-    if (!playerRef.current) return;
-
-    playerRef.current.contentWindow.postMessage(
-      JSON.stringify({
-        event: "command",
-        func: muted ? "unMute" : "mute",
-      }),
-      "*"
-    );
-
-    setMuted(!muted);
-  };
-
-  if (!movie) return null;
+  if (loading || !movie) {
+    return <HeroSkeleton />;
+  }
 
   const handlePlay = () => {
     let url;
@@ -87,22 +55,12 @@ const MovieHero = ({ id, mediaType }) => {
 
   return (
     <div className="hero-container">
-      {/* Trailer or fallback */}
-      {trailerKey ? (
-        <iframe
-          ref={playerRef}
-          className="hero-video"
-          src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&mute=1&controls=0&loop=1&playlist=${trailerKey}&modestbranding=1&playsinline=1&enablejsapi=1`}
-          allow="autoplay; encrypted-media"
-        ></iframe>
-      ) : (
-        <div
-          className="hero-fallback"
-          style={{
-            backgroundImage: `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`,
-          }}
-        ></div>
-      )}
+      {/* Use the reusable trailer component */}
+      <TrailerPlayer
+        mediaId={id}
+        mediaType={mediaType}
+        fallbackImage={movie.backdrop_path}
+      />
 
       <div className="hero-overlay"></div>
 
@@ -115,11 +73,8 @@ const MovieHero = ({ id, mediaType }) => {
             <FaPlay className="mr-2" />
             Play
           </button>
-
-          {/* Sound Toggle */}
-          <button className="hero-btn sound" onClick={toggleMute}>
-            {muted ? <FaVolumeMute /> : <FaVolumeUp />}
-          </button>
+          
+          {/* Sound button now comes from TrailerPlayer */}
         </div>
       </div>
     </div>
