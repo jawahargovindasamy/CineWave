@@ -5,7 +5,7 @@ import Hero from "../Components/Hero";
 import Navbar from "../Components/Navbar";
 
 const Home = () => {
-  const { loadMovies, trending, topRated, tv } = useAuth();
+  const { loadMovies, trending, topRated, tv, upcoming } = useAuth();
 
   useEffect(() => {
     loadMovies();
@@ -19,6 +19,7 @@ const Home = () => {
         <MovieCarousel title="Trending Now" movies={trending} />
         <MovieCarousel title="Top Rated" movies={topRated} />
         <MovieCarousel title="TV Originals" movies={tv} />
+        <MovieCarousel title="Upcoming Movies" movies={upcoming} />
       </div>
     </>
   );

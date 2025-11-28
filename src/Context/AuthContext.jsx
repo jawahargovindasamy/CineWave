@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [trending, setTrending] = useState([]);
   const [topRated, setTopRated] = useState([]);
   const [tv, setTV] = useState([]);
+  const [upcoming, setUpcoming] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchPage, setSearchPage] = useState(1);
@@ -33,6 +34,7 @@ export const AuthProvider = ({ children }) => {
     setTrending((await apiCall("/trending/all/week")).results);
     setTopRated((await apiCall("/movie/top_rated")).results);
     setTV((await apiCall("/discover/tv")).results);
+    setUpcoming((await apiCall("/movie/upcoming")).results);
   };
 
   const getSimilar = async (mediaType, id) => {
@@ -48,6 +50,7 @@ export const AuthProvider = ({ children }) => {
         trending,
         topRated,
         tv,
+        upcoming,
         searchTerm,
         setSearchTerm,
         searchResults,
