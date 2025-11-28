@@ -8,6 +8,7 @@ import VideoPlayer from "./Components/VideoPlayer";
 import Genres from "./Pages/Genres";
 import MovieGenrePage from "./Pages/MovieGenrePage";
 import TVGenrePage from "./Pages/TVGenrePage";
+import Person from "./Pages/Person";
 
 const App = () => {
   return (
@@ -22,9 +23,11 @@ const App = () => {
           path="/tv/:id/season/:season/episode/:episode/play"
           element={<VideoPlayer />}
         />
-        <Route path="/genres" element={<Genres/>}/>
+        <Route path="/genres" element={<Genres />} />
         <Route path="/genre/movie/:id" element={<MovieGenrePage />} />
         <Route path="/genre/tv/:id" element={<TVGenrePage />} />
+
+        <Route path="/person/:id" element={<Person />} />
       </Routes>
     </BrowserRouter>
   );
