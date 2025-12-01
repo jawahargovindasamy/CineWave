@@ -79,12 +79,21 @@ const MovieCarousel = ({ title, movies = [] }) => {
   return (
     <div className="mb-5">
       {/* Title + Arrows */}
-      <div className="d-flex justify-content-between align-items-center mb-3 px-1 px-md-2">
-        <h2 className="text-white fw-semibold">{title}</h2>
+      <div className="d-flex justify-content-between align-items-center mb-3 px-2 px-md-3 px-lg-4">
+        <div className="d-flex align-items-center gap-3">
+          <div
+            className="bg-white rounded-3"
+            style={{ width: "5px", height: "40px" }}
+          ></div>
+
+          <h3 className="fw-bold text-white mb-0">
+            {title}
+          </h3>
+        </div>
 
         <div className="d-flex gap-2">
           <button
-            className="btn btn-outline-light btn-md d-flex align-items-center justify-content-center"
+            className="btn btn-outline-light btn-md d-flex align-items-center justify-content-center "
             onClick={handlePrev}
             disabled={slides.length <= 1}
             style={{ width: "40px", height: "40px", borderRadius: "50%" }}

@@ -26,10 +26,23 @@ const Similar = ({ id, mediaType }) => {
   if (similarItems.length === 0) return null;
 
   return (
-    <div className="pb-4 px-3 mt-4">
-      <h3 className="text-white mb-3">
-        Similar {mediaType === "movie" ? "Movies" : "TV Shows"}
-      </h3>
+    <div
+      className="p-3 p-md-4 p-lg-5 mx-2 mx-md-4 rounded-4 shadow-lg mt-4 mt-md-3"
+      style={{
+        background:
+          "linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%)",
+        backdropFilter: "blur(10px)",
+        border: "1px solid rgba(255, 255, 255, 0.1)",
+      }}
+    >
+      <div className="d-flex align-items-center gap-3 mb-3 mb-md-4">
+        <div
+          className="bg-white rounded-3"
+          style={{ width: "5px", height: "40px" }}
+        ></div>
+
+        <h3 className="fw-bold text-white mb-0">Similar {mediaType === "movie" ? "Movies" : "TV Shows"}</h3>
+      </div>
 
       <div className="container-fluid">
         {loading ? (
