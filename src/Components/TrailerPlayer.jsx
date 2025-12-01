@@ -2,32 +2,32 @@ import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../Context/AuthContext";
 import { FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 
-const TrailerPlayer = ({ 
-  mediaId, 
-  mediaType, 
+const TrailerPlayer = ({
+  mediaId,
+  mediaType,
   onTrailerLoaded = () => {},
   fallbackImage = null,
-  heroRef
+  heroRef,
 }) => {
-  const { apiCall } = useAuth();
+  const { apiCall, muted, setMuted } = useAuth();
   const [trailerKey, setTrailerKey] = useState(null);
-  const [muted, setMuted] = useState(true);
+
   const playerRef = useRef(null);
 
   // Fetch trailer
   useEffect(() => {
     const fetchTrailer = async () => {
       if (!mediaId || !mediaType) return;
-      
+
       try {
         const endpoint = `/${mediaType}/${mediaId}/videos`;
         const videoData = await apiCall(endpoint);
-        
+
         // Find YouTube trailer
         const trailer = videoData.results?.find(
           (v) => v.type === "Trailer" && v.site === "YouTube"
         );
-        
+
         const key = trailer?.key || null;
         setTrailerKey(key);
         onTrailerLoaded(key);
@@ -47,16 +47,16 @@ const TrailerPlayer = ({
 
     const timer = setTimeout(() => {
       if (muted) {
-      playerRef.current.contentWindow.postMessage(
-        JSON.stringify({ event: "command", func: "mute" }),
-        "*"
-      );
-    } else {
-      playerRef.current.contentWindow.postMessage(
-        JSON.stringify({ event: "command", func: "unMute" }),
-        "*"
-      );
-    }
+        playerRef.current.contentWindow.postMessage(
+          JSON.stringify({ event: "command", func: "mute" }),
+          "*"
+        );
+      } else {
+        playerRef.current.contentWindow.postMessage(
+          JSON.stringify({ event: "command", func: "unMute" }),
+          "*"
+        );
+      }
     }, 600);
 
     return () => clearTimeout(timer);
@@ -119,7 +119,6 @@ const TrailerPlayer = ({
     return () => observer.disconnect();
   }, [heroRef]);
 
-
   // Render either trailer or fallback image
   return (
     <>
@@ -139,7 +138,7 @@ const TrailerPlayer = ({
           }}
         ></div>
       ) : null}
-      
+
       {/* Sound toggle button */}
       {trailerKey && (
         <button className="hero-btn sound" onClick={toggleMute}>

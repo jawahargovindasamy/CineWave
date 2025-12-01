@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [searchTotalPages, setSearchTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchFilter, setSearchFilter] = useState("all");
+  const [muted, setMuted] = useState(true);
 
   const axiosTMDB = axios.create({
     baseURL: TMDB_URL,
@@ -38,9 +39,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const getSimilar = async (mediaType, id) => {
-  const data = await apiCall(`/${mediaType}/${id}/similar`);
-  return data.results || [];
-};
+    const data = await apiCall(`/${mediaType}/${id}/similar`);
+    return data.results || [];
+  };
 
   return (
     <AuthContext.Provider
@@ -63,7 +64,9 @@ export const AuthProvider = ({ children }) => {
         setTotalCount,
         searchFilter,
         setSearchFilter,
-        getSimilar
+        getSimilar,
+        muted,
+        setMuted,
       }}
     >
       {children}
