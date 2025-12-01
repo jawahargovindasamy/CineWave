@@ -52,7 +52,7 @@ const Similar = ({ id, mediaType }) => {
               const title = isPerson ? item.name : item.title || item.name;
 
               return (
-                <div key={item.id} className="col">
+                <div key={item.id} className="col-6 col-sm-4 col-md-3 col-lg-2">
                   {isPerson ? (
                     // person card - unchanged
                     <div

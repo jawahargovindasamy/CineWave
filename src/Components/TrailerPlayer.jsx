@@ -6,7 +6,8 @@ const TrailerPlayer = ({
   mediaId, 
   mediaType, 
   onTrailerLoaded = () => {},
-  fallbackImage = null
+  fallbackImage = null,
+  heroRef
 }) => {
   const { apiCall } = useAuth();
   const [trailerKey, setTrailerKey] = useState(null);
@@ -45,15 +46,21 @@ const TrailerPlayer = ({
     if (!trailerKey || !playerRef.current) return;
 
     const timer = setTimeout(() => {
+      if (muted) {
       playerRef.current.contentWindow.postMessage(
         JSON.stringify({ event: "command", func: "mute" }),
         "*"
       );
-      setMuted(true);
+    } else {
+      playerRef.current.contentWindow.postMessage(
+        JSON.stringify({ event: "command", func: "unMute" }),
+        "*"
+      );
+    }
     }, 600);
 
     return () => clearTimeout(timer);
-  }, [trailerKey]);
+  }, [trailerKey, muted]);
 
   // Toggle mute function
   const toggleMute = () => {
@@ -69,6 +76,49 @@ const TrailerPlayer = ({
 
     setMuted(!muted);
   };
+
+  //Pause when tab is switched
+  useEffect(() => {
+    const handleVis = () => {
+      if (!playerRef.current) return;
+
+      playerRef.current.contentWindow.postMessage(
+        JSON.stringify({
+          event: "command",
+          func: document.hidden ? "pauseVideo" : "playVideo",
+        }),
+        "*"
+      );
+    };
+
+    document.addEventListener("visibilitychange", handleVis);
+    return () => document.removeEventListener("visibilitychange", handleVis);
+  }, []);
+
+  //Pause when hero section leaves viewport
+  useEffect(() => {
+    if (!heroRef?.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!playerRef.current) return;
+
+        playerRef.current.contentWindow.postMessage(
+          JSON.stringify({
+            event: "command",
+            func: entry.isIntersecting ? "playVideo" : "pauseVideo",
+          }),
+          "*"
+        );
+      },
+      { threshold: 0.4 }
+    );
+
+    observer.observe(heroRef.current);
+
+    return () => observer.disconnect();
+  }, [heroRef]);
+
 
   // Render either trailer or fallback image
   return (

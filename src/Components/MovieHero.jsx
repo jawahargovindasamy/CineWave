@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../Context/AuthContext";
 import { FaPlay } from "react-icons/fa";
 import "./Hero.css";
@@ -8,6 +8,7 @@ import HeroSkeleton from "./HeroSkeleton";
 
 const MovieHero = ({ id, mediaType }) => {
   const { apiCall } = useAuth();
+  const heroRef = useRef(null);
 
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -54,12 +55,13 @@ const MovieHero = ({ id, mediaType }) => {
   };
 
   return (
-    <div className="hero-container">
+    <div className="hero-container" ref={heroRef}>
       {/* Use the reusable trailer component */}
       <TrailerPlayer
         mediaId={id}
         mediaType={mediaType}
         fallbackImage={movie.backdrop_path}
+        heroRef={heroRef}
       />
 
       <div className="hero-overlay"></div>

@@ -30,7 +30,7 @@ const SearchResult = ({ Result, searchTerm, totalCount }) => {
             else if (item.name) type = "tv";
 
             return (
-              <div key={index} className="col">
+              <div key={index} className="col-6 col-sm-4 col-md-3 col-lg-2">
                 {!isPerson ? (
                   /* ------------------------------
                      MOVIE / TV CARD -> MediaCard

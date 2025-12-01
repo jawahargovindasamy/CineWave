@@ -1,13 +1,14 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useAuth } from "../Context/AuthContext";
 import { FaPlay, FaInfoCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import TrailerPlayer from "./TrailerPlayer";
-import HeroSkeleton from "./HeroSkeleton";   // <-- added
+import HeroSkeleton from "./HeroSkeleton"; // <-- added
 import "./Hero.css";
 
 const Hero = ({ trendingMovies = [] }) => {
   const { apiCall } = useAuth();
+  const heroRef = useRef(null);
 
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,14 +22,14 @@ const Hero = ({ trendingMovies = [] }) => {
 
     const random = list[Math.floor(Math.random() * list.length)];
     setMovie(random);
-    setLoading(false);               // <-- stop loading when movie loaded
+    setLoading(false); // <-- stop loading when movie loaded
   }, []);
 
   // Set initial movie once trendingMovies is loaded
   useEffect(() => {
     if (trendingMovies.length === 0) return;
 
-    setLoading(true);                 // <-- show skeleton before showing random movie
+    setLoading(true); // <-- show skeleton before showing random movie
     pickRandomMovie(trendingMovies);
   }, [trendingMovies, pickRandomMovie]);
 
@@ -37,7 +38,7 @@ const Hero = ({ trendingMovies = [] }) => {
     if (trendingMovies.length === 0) return;
 
     const interval = setInterval(() => {
-      setLoading(true);              // show skeleton during switch
+      setLoading(true); // show skeleton during switch
       pickRandomMovie(trendingMovies);
     }, 30000);
 
@@ -50,12 +51,12 @@ const Hero = ({ trendingMovies = [] }) => {
   }
 
   return (
-    <div className="hero-container">
-      
+    <div className="hero-container" ref={heroRef}>
       <TrailerPlayer
         mediaId={movie.id}
         mediaType={movie.media_type}
         fallbackImage={movie.backdrop_path}
+        heroRef={heroRef}
       />
 
       <div className="hero-overlay"></div>

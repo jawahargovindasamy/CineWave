@@ -320,15 +320,6 @@ const Person = () => {
 
       <style>
         {`
-          .movie-card-wrapper {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-          }
-          
-          .movie-card-wrapper:hover {
-            transform: translateY(-8px) scale(1.03);
-            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
-          }
 
           /* Fade In Animation */
           .animate-fade-in {
@@ -366,29 +357,6 @@ const Person = () => {
             .display-5 {
               font-size: 2.2rem !important;
             }
-          }
-
-          /* Smooth scroll behavior */
-          html {
-            scroll-behavior: smooth;
-          }
-
-          /* Custom scrollbar */
-          ::-webkit-scrollbar {
-            width: 10px;
-          }
-
-          ::-webkit-scrollbar-track {
-            background: #0d0d0d;
-          }
-
-          ::-webkit-scrollbar-thumb {
-            background: #ffc107;
-            border-radius: 5px;
-          }
-
-          ::-webkit-scrollbar-thumb:hover {
-            background: #ffb300;
           }
         `}
       </style>
