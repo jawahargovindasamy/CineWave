@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../Context/AuthContext";
 import { Row, Col, Form } from "react-bootstrap";
 import { FaSearch, FaSort } from "react-icons/fa";
-import "./TVEpisodesList.css";
 import VideoPlayer from "./VideoPlayer";
 import { useNavigate } from "react-router-dom";
 
@@ -61,7 +60,9 @@ const TVEpisodesList = ({ tvId }) => {
   // Generate vidsrc embed URL
   const playEpisode = (season, episode) => {
     const url = `https://vidsrc.icu/embed/tv/${tvId}/${season}/${episode}`;
-    navigate(`/tv/${tvId}/season/${season}/episode/${episode}/play`, { state: { url , title: `${series.name} - S${season}E${episode}`} });
+    navigate(`/tv/${tvId}/season/${season}/episode/${episode}/play`, {
+      state: { url, title: `${series.name} - S${season}E${episode}` },
+    });
     setCurrentVideoUrl(url);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -176,6 +177,34 @@ const TVEpisodesList = ({ tvId }) => {
           })}
         </div>
       </div>
+      <style>
+        {`
+          .episodes-scrollable::-webkit-scrollbar {
+            width: 8px;
+          }
+
+          .episodes-scrollable::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+          }
+
+          .episodes-scrollable::-webkit-scrollbar-track {
+            background: transparent;
+          }
+
+          .custom-input-height {
+            height: 48px; /* same as sort button height */
+          }
+
+          .custom-input-height .form-control {
+            height: 100%;
+          }
+
+          .custom-input-height .form-select {
+            height: 100%;
+          }
+        `}
+      </style>
     </div>
   );
 };

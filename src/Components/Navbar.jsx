@@ -36,7 +36,7 @@ const Navbar = () => {
           alt="CineWave Logo"
           style={{ height: "40px", width: "40px", marginRight: "10px" }}
         />
-        CineWave Movies
+        CineWave
       </span>
 
       {/* Hamburger toggle button */}

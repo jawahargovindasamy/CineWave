@@ -320,7 +320,6 @@ const Person = () => {
 
       <style>
         {`
-
           /* Fade In Animation */
           .animate-fade-in {
             animation: fadeIn 0.4s ease-in;
@@ -348,9 +347,6 @@ const Person = () => {
               font-size: 1.8rem !important;
             }
             
-            .movie-card-wrapper:hover {
-              transform: translateY(-4px) scale(1.02);
-            }
           }
 
           @media (min-width: 768px) and (max-width: 991px) {

@@ -1,35 +1,27 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useAuth } from "../Context/AuthContext";
 import { FaPlay, FaInfoCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import TrailerPlayer from "./TrailerPlayer";
-import HeroSkeleton from "./HeroSkeleton"; // <-- added
 import "./Hero.css";
 
 const Hero = ({ trendingMovies = [] }) => {
-  const { apiCall } = useAuth();
   const heroRef = useRef(null);
 
   const [movie, setMovie] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [overviewExpanded, setOverviewExpanded] = useState(false);
 
   const navigate = useNavigate();
 
   // Pick Random Movie
-  const pickRandomMovie = useCallback(async (list) => {
+  const pickRandomMovie = useCallback((list) => {
     if (!list || list.length === 0) return;
-
     const random = list[Math.floor(Math.random() * list.length)];
     setMovie(random);
-    setLoading(false); // <-- stop loading when movie loaded
   }, []);
 
   // Set initial movie once trendingMovies is loaded
   useEffect(() => {
     if (trendingMovies.length === 0) return;
-
-    setLoading(true); // <-- show skeleton before showing random movie
     pickRandomMovie(trendingMovies);
   }, [trendingMovies, pickRandomMovie]);
 
@@ -38,17 +30,13 @@ const Hero = ({ trendingMovies = [] }) => {
     if (trendingMovies.length === 0) return;
 
     const interval = setInterval(() => {
-      setLoading(true); // show skeleton during switch
       pickRandomMovie(trendingMovies);
     }, 30000);
 
     return () => clearInterval(interval);
   }, [trendingMovies, pickRandomMovie]);
 
-  // If still loading → show skeleton
-  if (loading || !movie) {
-    return <HeroSkeleton />;
-  }
+  if (!movie) return null;
 
   return (
     <div className="hero-container" ref={heroRef}>

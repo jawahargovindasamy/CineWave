@@ -3,8 +3,7 @@ import { useAuth } from "../Context/AuthContext";
 import { FaPlay } from "react-icons/fa";
 import "./Hero.css";
 import { useNavigate } from "react-router-dom";
-import TrailerPlayer from "./TrailerPlayer"; // Import the new component
-import HeroSkeleton from "./HeroSkeleton";
+import TrailerPlayer from "./TrailerPlayer";
 
 const MovieHero = ({ id, mediaType }) => {
   const { apiCall } = useAuth();
@@ -13,8 +12,8 @@ const MovieHero = ({ id, mediaType }) => {
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const [season, setSeason] = useState(1); // Default season
-  const [episode, setEpisode] = useState(1); // Default episode
+  const [season, setSeason] = useState(1);
+  const [episode, setEpisode] = useState(1);
 
   const navigate = useNavigate();
 
@@ -38,9 +37,7 @@ const MovieHero = ({ id, mediaType }) => {
     fetchMovie();
   }, [id, mediaType, apiCall]);
 
-  if (loading || !movie) {
-    return <HeroSkeleton />;
-  }
+  if (loading || !movie) return null;
 
   const handlePlay = () => {
     let url;
@@ -50,13 +47,21 @@ const MovieHero = ({ id, mediaType }) => {
       url = `https://vidsrc.icu/embed/tv/${id}/${season}/${episode}`;
     }
 
-    navigate(mediaType === "movie" ? `/movie/${id}/play` : `/tv/${id}/season/${season}/episode/${episode}/play`, 
-      { state: { url, title: movie.title || `${movie.name} - S${season}E${episode}` } });
+    navigate(
+      mediaType === "movie"
+        ? `/movie/${id}/play`
+        : `/tv/${id}/season/${season}/episode/${episode}/play`,
+      {
+        state: {
+          url,
+          title: movie.title || `${movie.name} - S${season}E${episode}`,
+        },
+      }
+    );
   };
 
   return (
     <div className="hero-container" ref={heroRef}>
-      {/* Use the reusable trailer component */}
       <TrailerPlayer
         mediaId={id}
         mediaType={mediaType}
@@ -70,13 +75,10 @@ const MovieHero = ({ id, mediaType }) => {
         <h1 className="hero-title">{movie.title || movie.name}</h1>
 
         <div className="hero-buttons">
-          {/* Play Button */}
           <button className="hero-btn play" onClick={handlePlay}>
             <FaPlay className="mr-2" />
             Play
           </button>
-          
-          {/* Sound button now comes from TrailerPlayer */}
         </div>
       </div>
     </div>

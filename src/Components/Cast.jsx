@@ -44,7 +44,6 @@ const Cast = ({ id, mediaType }) => {
       </div>
 
       {/* CAST LIST */}
-      {/* CAST LIST */}
       <div className="d-none d-md-block">
         <div className="row g-4">
           {cast.slice(0, 15).map((actor, index) => (
@@ -104,8 +103,9 @@ const Cast = ({ id, mediaType }) => {
         <div
           className="d-flex gap-3 overflow-auto pb-2"
           style={{
-            whiteSpace: "nowrap",
+            whiteSpace: "wrap",
             scrollbarWidth: "thin",
+            scrollbarColor: "rgba(255, 193, 7, 0.2) transparent",
           }}
         >
           {cast.slice(0, 15).map((actor, index) => (
@@ -145,8 +145,8 @@ const Cast = ({ id, mediaType }) => {
                 />
 
                 <div>
-                  <p className="fw-semibold text-white mb-1">{actor.name}</p>
-                  <p className="text-white-50 mb-0 small">{actor.character}</p>
+                  <p className="fw-semibold text-white mb-1 overflow-hidden">{actor.name}</p>
+                  <p className="text-white-50 mb-0 small overflow-hidden">{actor.character}</p>
                 </div>
               </div>
             </div>

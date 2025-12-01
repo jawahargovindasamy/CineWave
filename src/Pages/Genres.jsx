@@ -106,9 +106,7 @@ const Genres = () => {
                     backgroundColor: "#1a1a1a",
                   }}
                 >
-                  <span
-                    className="placeholder d-block w-100 h-100 rounded-3"
-                  ></span>
+                  <span className="placeholder d-block w-100 h-100 rounded-3"></span>
                 </div>
               </div>
             ))}
@@ -152,9 +150,7 @@ const Genres = () => {
                     backgroundColor: "#1a1a1a",
                   }}
                 >
-                  <span
-                    className="placeholder d-block w-100 h-100 rounded-3"
-                  ></span>
+                  <span className="placeholder d-block w-100 h-100 rounded-3"></span>
                 </div>
               </div>
             ))}

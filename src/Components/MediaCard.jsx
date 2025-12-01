@@ -23,7 +23,7 @@ const MediaCard = ({ image, title, rating, onClick }) => {
         <div className="position-absolute media-card-gradient" />
 
         <div className="position-absolute text-white media-card-content">
-          <div className="media-card-title">
+          <div className="media-card-title" title={title}>
             {title.length > 15 ? title.substring(0, 15) + "..." : title}
           </div>
 

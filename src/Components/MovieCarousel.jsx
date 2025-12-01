@@ -13,9 +13,9 @@ const MovieCarousel = ({ title, movies = [] }) => {
   // Responsive cards-per-slide
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth <= 425) setCardsPerSlide(2);
-      else if (window.innerWidth <= 768) setCardsPerSlide(3);
-      else if (window.innerWidth <= 992) setCardsPerSlide(4);
+      if (window.innerWidth <= 425) setCardsPerSlide(3);
+      else if (window.innerWidth <= 768) setCardsPerSlide(4);
+      else if (window.innerWidth <= 992) setCardsPerSlide(5);
       else setCardsPerSlide(5);
     };
 
