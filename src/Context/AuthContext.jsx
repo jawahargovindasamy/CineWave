@@ -6,6 +6,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const TMDB_KEY = "71c08a91c58d917b27e9bff6913900de";
   const TMDB_URL = "https://api.themoviedb.org/3";
+  const VIDURL = "https://vidsrcme.ru/embed";
 
   const [trending, setTrending] = useState([]);
   const [topRated, setTopRated] = useState([]);
@@ -46,6 +47,7 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{
+        VIDURL,
         apiCall,
         loadMovies,
         trending,

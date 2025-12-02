@@ -6,7 +6,7 @@ import VideoPlayer from "./VideoPlayer";
 import { useNavigate } from "react-router-dom";
 
 const TVEpisodesList = ({ tvId }) => {
-  const { apiCall } = useAuth();
+  const { apiCall,VIDURL } = useAuth();
 
   const [series, setSeries] = useState(null);
   const [episodes, setEpisodes] = useState([]);
@@ -35,7 +35,7 @@ const TVEpisodesList = ({ tvId }) => {
   // Load episodes
   useEffect(() => {
     const fetchEpisodes = async () => {
-      if (!selectedSeason) return;
+      if (selectedSeason === "" || selectedSeason === null) return; // Guard clause
       const seasonData = await apiCall(`/tv/${tvId}/season/${selectedSeason}`);
       setEpisodes(seasonData?.episodes || []);
     };
@@ -59,9 +59,25 @@ const TVEpisodesList = ({ tvId }) => {
 
   // Generate vidsrc embed URL
   const playEpisode = (season, episode) => {
-    const url = `https://vidsrc.icu/embed/tv/${tvId}/${season}/${episode}`;
+    const url = `${VIDURL}/tv/${tvId}/${season}/${episode}`;
+
+    // NEW: Get all episode numbers for the current season to pass to the player
+    const allEpisodeNumbers = episodes
+      .sort((a, b) => a.episode_number - b.episode_number)
+      .map(ep => ep.episode_number);
+
     navigate(`/tv/${tvId}/season/${season}/episode/${episode}/play`, {
-      state: { url, title: `${series.name} - S${season}E${episode}` },
+      state: {
+        url,
+        title: `${series.name} - S${season}E${episode}`,
+        // --- NEW DATA FOR NEXT EPISODE LOGIC ---
+        tvId: tvId,
+        seriesName: series.name,
+        seasonNumber: season,
+        currentEpisodeNumber: episode,
+        allEpisodeNumbers: allEpisodeNumbers,
+        // --- END OF NEW DATA ---
+      },
     });
     setCurrentVideoUrl(url);
     window.scrollTo({ top: 0, behavior: "smooth" });

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import TrailerPlayer from "./TrailerPlayer";
 
 const MovieHero = ({ id, mediaType }) => {
-  const { apiCall } = useAuth();
+  const { apiCall,VIDURL } = useAuth();
   const heroRef = useRef(null);
 
   const [movie, setMovie] = useState(null);
@@ -42,9 +42,9 @@ const MovieHero = ({ id, mediaType }) => {
   const handlePlay = () => {
     let url;
     if (mediaType === "movie") {
-      url = `https://vidsrc.icu/embed/movie/${id}`;
+      url = `${VIDURL}/movie/${id}`;
     } else if (mediaType === "tv") {
-      url = `https://vidsrc.icu/embed/tv/${id}/${season}/${episode}`;
+      url = `${VIDURL}/tv/${id}/${season}/${episode}`;
     }
 
     navigate(
