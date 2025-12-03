@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import TrailerPlayer from "./TrailerPlayer";
 
 const MovieHero = ({ id, mediaType }) => {
-  const { apiCall,VIDURL } = useAuth();
+  const { apiCall, VIDURL } = useAuth();
   const heroRef = useRef(null);
 
   const [movie, setMovie] = useState(null);
@@ -47,6 +47,19 @@ const MovieHero = ({ id, mediaType }) => {
       url = `${VIDURL}/tv/${id}/${season}/${episode}`;
     }
 
+    let allEpisodeNumbers = [];
+
+    if (mediaType === "tv") {
+      const seasonData = movie.seasons.find((s) => s.season_number === season);
+
+      if (seasonData?.episode_count) {
+        allEpisodeNumbers = Array.from(
+          { length: seasonData.episode_count },
+          (_, i) => i + 1
+        );
+      }
+    }
+
     navigate(
       mediaType === "movie"
         ? `/movie/${id}/play`
@@ -55,6 +68,11 @@ const MovieHero = ({ id, mediaType }) => {
         state: {
           url,
           title: movie.title || `${movie.name} - S${season}E${episode}`,
+          tvId: id,
+          seriesName: movie.name,
+          seasonNumber: season,
+          currentEpisodeNumber: episode,
+          allEpisodeNumbers: allEpisodeNumbers,
         },
       }
     );

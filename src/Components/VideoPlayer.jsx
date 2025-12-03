@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa";
 import { MdSkipNext, MdSkipPrevious } from "react-icons/md";
 import { useAuth } from "../Context/AuthContext";
 
@@ -9,21 +9,16 @@ const VideoPlayer = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // The component's internal state for the player, initialized from the router's state
   const [playerState, setPlayerState] = useState(location.state);
   const [showNav, setShowNav] = useState(true);
-  const [hoverPreview, setHoverPreview] = useState(null);
   const hideTimeout = useRef(null);
 
-  // Sync internal state if the router location changes (e.g., browser back/forward)
   useEffect(() => {
     setPlayerState(location.state);
   }, [location.state]);
 
-  // If there's no state/url, we can't play anything.
   if (!playerState?.url) return null;
 
-  // Destructure for easier access
   const {
     url,
     title,
@@ -34,7 +29,7 @@ const VideoPlayer = () => {
     allEpisodeNumbers = [],
   } = playerState;
 
-  // --- LOGIC FOR NEXT EPISODE ---
+  // --- NEXT EPISODE LOGIC ---
   const currentIndex = allEpisodeNumbers.indexOf(currentEpisodeNumber);
   const hasNext =
     currentIndex !== -1 && currentIndex < allEpisodeNumbers.length - 1;
@@ -53,20 +48,18 @@ const VideoPlayer = () => {
       currentEpisodeNumber: nextEpisodeNumber,
     };
 
-    // Update the component's state to change the iframe src
     setPlayerState(nextPlayerState);
 
-    // Update the browser's URL and history state without a full page reload
     navigate(
       `/tv/${tvId}/season/${seasonNumber}/episode/${nextEpisodeNumber}/play`,
       {
-        replace: true, // Replace the history entry
+        replace: true,
         state: nextPlayerState,
       }
     );
   };
 
-  // --- LOGIC FOR PREVIOUS EPISODE ---
+  // --- PREVIOUS EPISODE LOGIC ---
   const hasPrevious = currentIndex !== -1 && currentIndex > 0;
 
   const handlePrevious = () => {
@@ -83,10 +76,8 @@ const VideoPlayer = () => {
       currentEpisodeNumber: previousEpisodeNumber,
     };
 
-    // Update the component's state to change the iframe src
     setPlayerState(previousPlayerState);
 
-    // Update the browser's URL and history state without a full page reload
     navigate(
       `/tv/${tvId}/season/${seasonNumber}/episode/${previousEpisodeNumber}/play`,
       {
@@ -96,7 +87,7 @@ const VideoPlayer = () => {
     );
   };
 
-  // Hide nav after 3 seconds of inactivity
+  // --- AUTO HIDE NAV ---
   const resetHideTimeout = () => {
     setShowNav(true);
     if (hideTimeout.current) clearTimeout(hideTimeout.current);
@@ -106,148 +97,69 @@ const VideoPlayer = () => {
   useEffect(() => {
     resetHideTimeout();
     return () => clearTimeout(hideTimeout.current);
-  }, [playerState]); // Reset timer when episode changes
-
-  const navButtonStyle = {
-    display: "flex",
-    alignItems: "center",
-    gap: "15px",
-    color: "white",
-    cursor: "pointer",
-    fontSize: "18px",
-    transition: "opacity 0.3s",
-    textShadow: "0 0 5px black",
-  };
-
-  const nextEpisodeInfo = hasNext
-    ? {
-        number: allEpisodeNumbers[currentIndex + 1],
-        title: `${seriesName} - S${seasonNumber}E${
-          allEpisodeNumbers[currentIndex + 1]
-        }`,
-        img: `https://image.tmdb.org/t/p/w300${
-          playerState?.nextEpisodeImg || ""
-        }`,
-      }
-    : null;
-
-  const previousEpisodeInfo = hasPrevious
-    ? {
-        number: allEpisodeNumbers[currentIndex - 1],
-        title: `${seriesName} - S${seasonNumber}E${
-          allEpisodeNumbers[currentIndex - 1]
-        }`,
-        img: `https://image.tmdb.org/t/p/w300${
-          playerState?.previousEpisodeImg || ""
-        }`,
-      }
-    : null;
+  }, [playerState]);
 
   return (
     <div
-      style={{
-        height: "100vh",
-        width: "100vw",
-        backgroundColor: "black",
-        position: "relative",
-      }}
+      className="position-relative bg-black"
+      style={{ height: "100vh", width: "100vw" }}
       onMouseMove={resetHideTimeout}
     >
-      {hoverPreview && (
-        <div
-          className="position-absolute"
-          style={{
-            top: "70px",
-            right: hoverPreview.type === "next" ? "20px" : "auto",
-            left: hoverPreview.type === "previous" ? "20px" : "auto",
-            zIndex: 2000,
-          }}
-        >
-          <div className="card shadow-lg" style={{ width: "220px" }}>
-            <img
-              src={hoverPreview.img}
-              className="card-img-top"
-              alt="episode preview"
-            />
-            <div className="card-body p-2">
-              <h6 className="card-title text-center small mb-0">
-                {hoverPreview.title}
-              </h6>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Navigation Overlay */}
+      {/* NAV BAR */}
       <div
+        className={`position-absolute w-100 d-flex justify-content-between align-items-center px-4 py-3
+        ${showNav ? "opacity-100" : "opacity-0 pointer-events-none"}`}
         style={{
-          position: "absolute",
-          top: "20px",
-          left: "20px",
-          right: "20px",
-          zIndex: 10,
-          opacity: showNav ? 1 : 0,
-          pointerEvents: showNav ? "auto" : "none",
-          transition: "opacity 0.3s ease-in-out",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          top: 0,
+          left: 0,
+          zIndex: 50,
+          transition: "opacity 0.4s ease",
+          background:
+            "linear-gradient(to bottom, rgba(0,0,0,0.85), rgba(0,0,0,0))",
         }}
       >
-        {/* Back Button & Title */}
-        <div style={navButtonStyle} onClick={() => navigate(-1)}>
-          <FaArrowLeft size={24} />
-          {title && <span>{title}</span>}
+        {/* BACK + TITLE */}
+        <div
+          className="d-flex align-items-center gap-3 text-white"
+          style={{ cursor: "pointer" }}
+          onClick={() => navigate(-1)}
+        >
+          <FaArrowLeft size={26} />
+          <span className="fw-semibold fs-5">{title}</span>
         </div>
 
+        {/* NEXT / PREVIOUS BUTTONS */}
         <div className="d-flex gap-3">
-          {/* Previous Episode Button */}
           {hasPrevious && (
             <div
-              style={navButtonStyle}
+              className="d-flex align-items-center gap-2 px-3 py-2 rounded bg-opacity-25 bg-light border border-light text-white"
+              style={{ cursor: "pointer", backdropFilter: "blur(4px)" }}
               onClick={handlePrevious}
-              onMouseEnter={() =>
-                setHoverPreview({
-                  type: "previous",
-                  img: previousEpisodeInfo?.img,
-                  title: previousEpisodeInfo?.title,
-                })
-              }
-              onMouseLeave={() => setHoverPreview(null)}
             >
-              <span>Previous Episode</span>
-              <MdSkipPrevious size={24} />
+              <MdSkipPrevious size={26} />
+              <span className="small fw-medium">Previous Episode</span>
             </div>
           )}
 
-          {/* Next Episode Button */}
           {hasNext && (
             <div
-              style={navButtonStyle}
+              className="d-flex align-items-center gap-2 px-3 py-2 rounded bg-opacity-25 bg-light border border-light text-white"
+              style={{ cursor: "pointer", backdropFilter: "blur(4px)" }}
               onClick={handleNext}
-              onMouseEnter={() =>
-                setHoverPreview({
-                  type: "next",
-                  img: nextEpisodeInfo?.img,
-                  title: nextEpisodeInfo?.title,
-                })
-              }
-              onMouseLeave={() => setHoverPreview(null)}
             >
-              <MdSkipNext size={24} />
-              <span>Next Episode</span>
+              <MdSkipNext size={26} />
+              <span className="small fw-medium">Next Episode</span>
             </div>
           )}
         </div>
       </div>
 
-      {/* Fullscreen Video */}
+      {/* VIDEO FRAME */}
       <iframe
         key={url}
         src={url}
         width="100%"
         height="100%"
-        frameBorder="0"
         style={{ display: "block" }}
         allow="autoplay; encrypted-media; clipboard-write; accelerometer; gyroscope; web-share"
         allowFullScreen
