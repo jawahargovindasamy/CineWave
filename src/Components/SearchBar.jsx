@@ -1,26 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaSearch, FaTimes, FaFilter } from "react-icons/fa";
 import { useAuth } from "../Context/AuthContext";
+import { useSearchParams } from "react-router-dom";
 
 const SearchBar = () => {
-  const { searchTerm, setSearchTerm, searchFilter, setSearchFilter } = useAuth();
+  const { searchTerm, setSearchTerm, searchFilter, setSearchFilter } =
+    useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // ✅ Restore input & filter from URL on refresh
+  useEffect(() => {
+    const q = searchParams.get("q") || "";
+    const type = searchParams.get("type") || "all";
+
+    setSearchTerm(q);
+    setSearchFilter(type);
+    // eslint-disable-next-line
+  }, []);
+
+  // ✅ ONLY ENTER updates URL
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      const params = {};
+      if (searchTerm.trim()) params.q = searchTerm.trim();
+      if (searchFilter !== "all") params.type = searchFilter;
+      params.page = 1;
+      setSearchParams(params);
+    }
+  };
 
   const handleSelect = (value) => {
     setSearchFilter(value);
     setShowDropdown(false);
+
+    const params = {};
+    if (searchTerm.trim()) params.q = searchTerm.trim();
+    if (value !== "all") params.type = value;
+    params.page = 1;
+    setSearchParams(params);
   };
 
   return (
     <div className="mt-5 w-100 d-flex justify-content-center position-relative">
       <div className="position-relative" style={{ width: "80%" }}>
-
-        {/* INPUT BAR */}
         <input
           type="text"
           value={searchTerm}
           className="bg-transparent text-white py-2 px-5 w-100"
           onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Movies, TV Series and more"
           style={{
             border: "2px solid white",
@@ -31,7 +60,6 @@ const SearchBar = () => {
           }}
         />
 
-        {/* SEARCH ICON */}
         <FaSearch
           className="position-absolute text-white"
           style={{
@@ -42,7 +70,6 @@ const SearchBar = () => {
           }}
         />
 
-        {/* CLEAR ICON */}
         {searchTerm && (
           <FaTimes
             className="position-absolute text-white"
@@ -52,11 +79,14 @@ const SearchBar = () => {
               transform: "translateY(-50%)",
               cursor: "pointer",
             }}
-            onClick={() => setSearchTerm("")}
+            onClick={() => {
+              setSearchTerm("");
+              setSearchFilter("all");
+              setSearchParams({});
+            }}
           />
         )}
 
-        {/* FILTER ICON */}
         <FaFilter
           className="position-absolute text-white"
           style={{
@@ -68,7 +98,6 @@ const SearchBar = () => {
           onClick={() => setShowDropdown(!showDropdown)}
         />
 
-        {/* DROPDOWN MENU */}
         {showDropdown && (
           <div
             style={{
@@ -83,46 +112,21 @@ const SearchBar = () => {
               zIndex: 100,
             }}
           >
-            <div
-              style={{
-                padding: "8px",
-                color: searchFilter === "all" ? "yellow" : "white",
-                cursor: "pointer",
-              }}
-              onClick={() => handleSelect("all")}
-            >
-              All
-            </div>
-            <div
-              style={{
-                padding: "8px",
-                color: searchFilter === "movie" ? "yellow" : "white",
-                cursor: "pointer",
-              }}
-              onClick={() => handleSelect("movie")}
-            >
-              Movies
-            </div>
-            <div
-              style={{
-                padding: "8px",
-                color: searchFilter === "tv" ? "yellow" : "white",
-                cursor: "pointer",
-              }}
-              onClick={() => handleSelect("tv")}
-            >
-              TV Series
-            </div>
-            <div
-              style={{
-                padding: "8px",
-                color: searchFilter === "person" ? "yellow" : "white",
-                cursor: "pointer",
-              }}
-              onClick={() => handleSelect("person")}
-            >
-              Person
-            </div>
+            {["all", "movie", "tv", "person"].map((item) => (
+              <div
+                key={item}
+                style={{
+                  padding: "8px",
+                  color: searchFilter === item ? "yellow" : "white",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleSelect(item)}
+              >
+                {item === "tv"
+                  ? "TV Series"
+                  : item.charAt(0).toUpperCase() + item.slice(1)}
+              </div>
+            ))}
           </div>
         )}
       </div>

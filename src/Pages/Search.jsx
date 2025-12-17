@@ -5,12 +5,12 @@ import SearchBar from "../Components/SearchBar";
 import SearchResult from "../Components/SearchResult";
 import Pagination from "../Components/Pagination";
 import CardSkeleton from "../Components/CardSkeleton";
+import { useSearchParams } from "react-router-dom";
 
 const Search = () => {
   const {
     loadMovies,
     trending,
-    searchTerm,
     apiCall,
     searchResults,
     setSearchResults,
@@ -18,50 +18,54 @@ const Search = () => {
     setSearchPage,
     searchTotalPages,
     setSearchTotalPages,
-    searchFilter,
     totalCount,
     setTotalCount,
   } = useAuth();
 
   const [loading, setLoading] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // ✅ SOURCE OF TRUTH = URL
+  const query = searchParams.get("q") || "";
+  const page = Number(searchParams.get("page")) || 1;
+  const type = searchParams.get("type") || "all";
 
   useEffect(() => {
     loadMovies();
-    setLoading(false); // trending movies load completed
+    setLoading(false);
   }, []);
 
-  const loadResult = async (page = 1) => {
-    setLoading(true); // <-- Start showing skeletons
-
-    if (searchTerm.trim() === "") {
+  const loadResult = async () => {
+    if (!query) {
       setSearchResults([]);
-      setSearchPage(1);
-      setLoading(false); // <-- Stop skeletons
+      setTotalCount(0);
       return;
     }
 
+    setLoading(true);
+
     let endpoint = "/search/multi";
-    if (searchFilter === "movie") endpoint = "/search/movie";
-    if (searchFilter === "tv") endpoint = "/search/tv";
-    if (searchFilter === "person") endpoint = "/search/person";
+    if (type === "movie") endpoint = "/search/movie";
+    if (type === "tv") endpoint = "/search/tv";
+    if (type === "person") endpoint = "/search/person";
 
     const res = await apiCall(endpoint, {
-      query: searchTerm,
+      query,
       page,
     });
 
     setSearchResults(res.results || []);
-    setSearchPage(page);
     setSearchTotalPages(res.total_pages || 1);
     setTotalCount(res.total_results || 0);
+    setSearchPage(page);
 
-    setLoading(false); // <-- Stop skeletons after fetching
+    setLoading(false);
   };
 
-  // Run search on searchTerm OR filter change
+  // ✅ SEARCH RUNS ONLY WHEN URL CHANGES
   useEffect(() => {
-    loadResult(1);
-  }, [searchTerm, searchFilter]);
+    loadResult();
+  }, [query, type, page]);
 
   return (
     <div className="bg-black min-vh-100">
@@ -69,21 +73,15 @@ const Search = () => {
         <Navbar />
       </div>
 
-      {/* SEARCH INPUT */}
       <SearchBar />
 
-      {/* Trending section when search is empty */}
-      {searchTerm.length === 0 && (
+      {!query && (
         <SearchResult Result={trending} searchTerm="Trending Now" />
       )}
 
-      {/* SEARCH RESULTS */}
       {loading ? (
         <div className="container mt-5">
-          {/* Heading */}
-          <h3 className="text-white fs-4 fw-bold mb-4">{searchTerm}</h3>
-
-          {/* Skeleton Grid */}
+          <h3 className="text-white fs-4 fw-bold mb-4">{query}</h3>
           <div
             className="d-grid"
             style={{
@@ -97,25 +95,24 @@ const Search = () => {
           </div>
         </div>
       ) : (
-        searchTerm.length > 0 && (
+        query && (
           <>
             <SearchResult
               Result={searchResults}
-              searchTerm={searchTerm}
+              searchTerm={query}
               totalCount={totalCount}
             />
 
-            {/* Pagination */}
             {searchResults.length > 0 && (
               <Pagination
                 currentPage={searchPage}
                 totalPages={searchTotalPages}
                 onPrev={() => {
-                  loadResult(searchPage - 1);
+                  setSearchParams({ q: query, type, page: page - 1 });
                   window.scrollTo(0, 0);
                 }}
                 onNext={() => {
-                  loadResult(searchPage + 1);
+                  setSearchParams({ q: query, type, page: page + 1 });
                   window.scrollTo(0, 0);
                 }}
               />

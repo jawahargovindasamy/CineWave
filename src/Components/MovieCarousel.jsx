@@ -77,9 +77,9 @@ const MovieCarousel = ({ title, movies = [] }) => {
   }
 
   return (
-    <div className="mb-5">
+    <div className="mb-5 px-2 px-md-3 px-lg-4">
       {/* Title + Arrows */}
-      <div className="d-flex justify-content-between align-items-center mb-3 px-2 px-md-3 px-lg-4">
+      <div className="d-flex justify-content-between align-items-center mb-3">
         <div className="d-flex align-items-center gap-3">
           <div
             className="bg-white rounded-3"

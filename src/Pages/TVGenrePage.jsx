@@ -1,26 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import {
+  useParams,
+  useNavigate,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
 import Navbar from "../Components/Navbar";
 import MediaCard from "../Components/MediaCard";
 import Pagination from "../Components/Pagination";
+import CardSkeleton from "../Components/CardSkeleton";
 
 const TVGenrePage = () => {
   const { id } = useParams();
   const location = useLocation();
-  const navigate = useNavigate();
   const { apiCall } = useAuth();
+  const navigate = useNavigate();
 
   const genreName = location.state?.genreName || "";
 
   const [tv, setTV] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = Number(searchParams.get("page")) || 1;
   const [totalPages, setTotalPages] = useState(1);
 
-  // Fetch function
-  const fetchTv = async (pageNumber = 1) => {
+  const fetchTV = async (pageNumber = 1) => {
     setLoading(true);
     const data = await apiCall(
       `/discover/tv?with_genres=${id}&page=${pageNumber}`
@@ -30,26 +36,26 @@ const TVGenrePage = () => {
     setLoading(false);
   };
 
-  // When id changes → reset page to 1
+  // Reset page to 1 if query param missing
   useEffect(() => {
-    setPage(1);
+    if (!searchParams.get("page")) setSearchParams({ page: 1 });
   }, [id]);
 
-  // Fetch based on page
+  // Fetch TV shows whenever id or page changes
   useEffect(() => {
-    fetchTv(page);
-  }, [page, id]);
+    fetchTV(page);
+  }, [id, page]);
 
   const handlePrev = () => {
     if (page > 1) {
-      setPage((p) => p - 1);
+      setSearchParams({ page: page - 1 });
       window.scrollTo(0, 0);
     }
   };
 
   const handleNext = () => {
     if (page < totalPages) {
-      setPage((p) => p + 1);
+      setSearchParams({ page: page + 1 });
       window.scrollTo(0, 0);
     }
   };
@@ -69,13 +75,7 @@ const TVGenrePage = () => {
           {loading
             ? Array.from({ length: 10 }).map((_, idx) => (
                 <div key={idx} className="col">
-                  <div
-                    style={{
-                      height: "300px",
-                      borderRadius: "8px",
-                      background: "#1a1a1a",
-                    }}
-                  />
+                  <CardSkeleton />
                 </div>
               ))
             : tv.map((show) => (
@@ -94,7 +94,7 @@ const TVGenrePage = () => {
                         ? `https://image.tmdb.org/t/p/w500${show.poster_path}`
                         : "/no-image.png"
                     }
-                    title={show.name}   // ✅ FIXED TITLE
+                    title={show.name}
                     rating={show.vote_average}
                   />
                 </div>

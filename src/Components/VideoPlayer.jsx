@@ -155,16 +155,18 @@ const VideoPlayer = () => {
       </div>
 
       {/* VIDEO FRAME */}
-      <iframe
-        key={url}
-        src={url}
-        width="100%"
-        height="100%"
-        style={{ display: "block" }}
-        allow="autoplay; encrypted-media; clipboard-write; accelerometer; gyroscope; web-share"
-        allowFullScreen
-        title={title || "Media Player"}
-      />
+      <div style={{ paddingTop: "55px", height: "calc(100vh - 55px)" }}>
+        <iframe
+          key={url}
+          src={url}
+          width="100%"
+          height="100%"
+          style={{ display: "block" }}
+          allow="autoplay; encrypted-media; clipboard-write; accelerometer; gyroscope; web-share"
+          allowFullScreen
+          title={title || "Media Player"}
+        />
+      </div>
     </div>
   );
 };

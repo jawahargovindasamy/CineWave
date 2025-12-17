@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import {
+  useParams,
+  useNavigate,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
 import Navbar from "../Components/Navbar";
 import MediaCard from "../Components/MediaCard";
@@ -18,7 +23,10 @@ const MovieGenrePage = () => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const page = Number(searchParams.get("page")) || 1;
+
   const [totalPages, setTotalPages] = useState(1);
 
   const fetchMovies = async (pageNumber = 1) => {
@@ -32,7 +40,9 @@ const MovieGenrePage = () => {
   };
 
   useEffect(() => {
-    setPage(1);
+    if (!searchParams.get("page")) {
+      setSearchParams({ page: 1 });
+    }
   }, [id]);
 
   useEffect(() => {
@@ -41,14 +51,14 @@ const MovieGenrePage = () => {
 
   const handlePrev = () => {
     if (page > 1) {
-      setPage((p) => p - 1);
+      setSearchParams({ page: page - 1 });
       window.scrollTo(0, 0);
     }
   };
 
   const handleNext = () => {
     if (page < totalPages) {
-      setPage((p) => p + 1);
+      setSearchParams({ page: page + 1 });
       window.scrollTo(0, 0);
     }
   };
@@ -68,7 +78,7 @@ const MovieGenrePage = () => {
           {loading
             ? Array.from({ length: 10 }).map((_, idx) => (
                 <div key={idx} className="col">
-                  <CardSkeleton/>
+                  <CardSkeleton />
                 </div>
               ))
             : movies.map((movie) => (
